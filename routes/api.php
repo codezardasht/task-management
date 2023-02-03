@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\BoardController;
+use App\Http\Controllers\ListBoardController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -29,4 +31,8 @@ Route::group([
     'middleware' => ['auth:api','throttle:api'],
 ], function ($router) {
     Route::apiResource('user', UserController::class);
+    Route::apiResource('board', BoardController::class);
+
+    Route::get('listBoard/{board}/board', [ListBoardController::class,'show_with_board']);
+    Route::apiResource('listBoard', ListBoardController::class);
 });
