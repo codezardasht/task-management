@@ -26,6 +26,7 @@ class UserStoreRequest extends FormRequest
     {
         return [
                 'name' => 'required',
+                'role' => ['required','exists:roles,id'],
                 'email' =>['required',Rule::unique('users')->whereNull('deleted_at'),'email:rfc,dns'],
                 'password' => 'required|string|min:8',
         ];

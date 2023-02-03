@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserStoreRequest;
+use App\Http\Resources\UserResource;
 use App\Models\Customer;
 use App\Models\User;
 use Carbon\Carbon;
@@ -41,26 +42,9 @@ class AuthController extends Controller
         return $this->respondWithToken($token);
     }
 
-    public function register(UserStoreRequest $request)
-    {
 
-        $user = new User;
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = Hash::make($request->password);
-        $user->created_by =\auth()->id();
-        $user->created_at =Carbon::now();
 
-        return $user->save()
-            ? response()->json([
-                'status' => true,
-                "message" => "User Created Successfully",
-            ])
-            : response()->json([
-                'status' => false,
-                "message" => "Please Try Again !",
-            ], 403);
-    }
+
 
     /**
      * Get the authenticated User.

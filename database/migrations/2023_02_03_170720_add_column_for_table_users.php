@@ -14,6 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
+            $table->integer('role_id');
             $table->integer('created_by');
             $table->integer('updated_by')->nullable();
             $table->softDeletes();
@@ -28,6 +29,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
+            $table->integer('role_id');
             $table->integer('created_by');
             $table->integer('updated_by')->nullable();
             $table->softDeletes();
