@@ -40,12 +40,14 @@ if (!function_exists('store_message')) {
 }
 
 if (!function_exists('store_image')) {
-    function store_image( $request )
+    function store_image( $request , $task )
     {
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $fileName = time().'_'.$file->getClientOriginalName();
             $path = $file->storeAs('images', $fileName, 'public');
+            $task->image = $path;
+            $task->save();
             return $path;
         }
 

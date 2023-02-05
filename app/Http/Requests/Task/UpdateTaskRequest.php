@@ -26,6 +26,7 @@ class UpdateTaskRequest extends FormRequest
         return [
             'title' => 'required|max:255',
             'description'=>['nullable'],
+            'label'=>['array'],
             'due_date'=>['nullable','date'],
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
 

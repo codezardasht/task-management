@@ -24,7 +24,7 @@ class StoreLabelRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'=>'required|max:255',
+            'name'=>'required|max:255|unique:labels',
             'color' => ['required' , 'regex:/^(#(?:[0-9a-f]{2}){2,4}|#[0-9a-f]{3}|(?:rgba?|hsla?)\((?:\d+%?(?:deg|rad|grad|turn)?(?:,|\s)+){2,3}[\s\/]*[\d\.]+%?\))$/i'],
         ];
     }

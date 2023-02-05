@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Label;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateLabelRequest extends FormRequest
 {
@@ -23,8 +24,13 @@ class UpdateLabelRequest extends FormRequest
      */
     public function rules()
     {
+
         return [
-            'name'=>'required|max:255',
+            'name' => [
+                'required',
+                'max:255',
+                Rule::unique('labels')->ignore($this->label->id),
+            ],
             'color' => 'nullable|regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/',
         ];
     }
