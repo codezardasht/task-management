@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\ListBoardController;
+use App\Http\Controllers\LabelController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -32,6 +33,7 @@ Route::group([
 ], function ($router) {
     Route::apiResource('user', UserController::class);
     Route::apiResource('board', BoardController::class);
+    Route::apiResource('label', LabelController::class);
 
     Route::get('listBoard/{board}/board', [ListBoardController::class,'show_with_board']);
     Route::apiResource('listBoard', ListBoardController::class);
