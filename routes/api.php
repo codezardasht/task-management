@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\ListBoardController;
 use App\Http\Controllers\LabelController;
+use App\Http\Controllers\TaskController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -35,6 +36,8 @@ Route::group([
 
     Route::get('board/{board}/listBoard',[BoardController::class,'list_board']);
     Route::apiResource('board', BoardController::class);
+
     Route::apiResource('label', LabelController::class);
     Route::apiResource('listBoard', ListBoardController::class);
+    Route::apiResource('task', TaskController::class);
 });

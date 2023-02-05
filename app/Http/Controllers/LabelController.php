@@ -93,13 +93,7 @@ class LabelController extends Controller
     public function destroy(Label $label)
     {
         return $label->delete()
-            ? response()->json([
-                'status' => true,
-                "message" => "Label Deleted Successfully",
-            ])
-            : response()->json([
-                'status' => false,
-                "message" => "Please Try Again !",
-            ], 403);
+            ? delete_message("Label")
+            : try_again_message() ;
     }
 }
