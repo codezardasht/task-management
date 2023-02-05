@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Board;
 
+use App\Http\Resources\ListCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class BoardResource extends JsonResource
@@ -17,6 +18,7 @@ class BoardResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'lists' => new ListCollection($this->whenLoaded('lists')),
         ];
     }
 }

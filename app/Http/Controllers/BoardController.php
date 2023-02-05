@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\BoardCollection;
-use App\Http\Resources\BoardResource;
+use App\Http\Requests\Board\StoreBoardRequest;
+use App\Http\Requests\Board\UpdateBoardRequest;
+use App\Http\Resources\Board\BoardCollection;
+use App\Http\Resources\Board\BoardResource;
 use App\Models\Board;
-use App\Http\Requests\StoreBoardRequest;
-use App\Http\Requests\UpdateBoardRequest;
 use Carbon\Carbon;
 
 class BoardController extends Controller
@@ -32,7 +32,7 @@ class BoardController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreBoardRequest  $request
+     * @param  \App\Http\Requests\Board\StoreBoardRequest  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(StoreBoardRequest $request)
@@ -75,7 +75,7 @@ class BoardController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateBoardRequest  $request
+     * @param  \App\Http\Requests\Board\UpdateBoardRequest  $request
      * @param  \App\Models\Board  $board
      * @return \Illuminate\Http\JsonResponse
      */
@@ -93,6 +93,12 @@ class BoardController extends Controller
                 'status' => false,
                 "message" => "Please Try Again !",
             ], 403);
+    }
+
+    public function list_board(Board $board)
+    {
+        $boardList = $board->with('lists')->first();
+        return new BoardResource($boardList);
     }
 
     /**

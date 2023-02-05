@@ -32,9 +32,9 @@ Route::group([
     'middleware' => ['auth:api','throttle:api'],
 ], function ($router) {
     Route::apiResource('user', UserController::class);
+
+    Route::get('board/{board}/listBoard',[BoardController::class,'list_board']);
     Route::apiResource('board', BoardController::class);
     Route::apiResource('label', LabelController::class);
-
-    Route::get('listBoard/{board}/board', [ListBoardController::class,'show_with_board']);
     Route::apiResource('listBoard', ListBoardController::class);
 });

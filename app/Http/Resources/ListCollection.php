@@ -19,6 +19,7 @@ class ListCollection extends ResourceCollection
                 return [
                     'id' => $data->id,
                     'name' => $data->name,
+                    'order' => $data->order,
                     'board_id' => $data->board_id,
                 ];
             })
