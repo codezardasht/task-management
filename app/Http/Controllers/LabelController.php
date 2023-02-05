@@ -18,7 +18,10 @@ class LabelController extends Controller
      */
     public function index()
     {
-        $labels = Label::latest()->get();
+        $search = request('search');
+        $labels = Label::when($search != "" , function ($query) use ($search){
+            $query->where('name' , 'LIKE' , '%'.$search.'%');
+        })->latest()->get();
         return new LabelCollection($labels);
     }
 
