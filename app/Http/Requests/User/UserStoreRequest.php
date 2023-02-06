@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\User;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class UserUpdateRequest extends FormRequest
+class UserStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +14,7 @@ class UserUpdateRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +25,10 @@ class UserUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+                'name' => 'required',
+                'role' => ['required','exists:roles,id'],
+                'email' =>['required',Rule::unique('users')->whereNull('deleted_at'),'email:rfc,dns'],
+                'password' => 'required|string|min:8',
         ];
     }
 }

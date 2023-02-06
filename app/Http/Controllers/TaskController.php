@@ -59,7 +59,7 @@ class TaskController extends Controller
      *
      * @param  \App\Http\Requests\Task\UpdateTaskRequest  $request
      * @param  \App\Models\Task  $task
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
@@ -69,8 +69,7 @@ class TaskController extends Controller
         $task->updated_by = \auth()->id();
         $task->updated_at = Carbon::now();
         ($request->hasFile('image')) ? store_image($request , $task) : NULL;
-
-       $label = ($request->label != '') ? $this->store_label($request->label , $task) : NULL;
+        ($request->label != '') ? $this->store_label($request->label , $task) : NULL;
 
 
 
@@ -84,11 +83,13 @@ class TaskController extends Controller
         $result = DB::transaction(function () use ($labels , $task) {
             foreach ($labels as $label )
             {
-                $check = $this->check_and_store_label($label , $task);
+               $this->check_and_store_label($label , $task);
             }
 
             return $labels;
         });
+
+        return $result;
     }
 
     public function check_and_store_label($labels , $task)
@@ -104,7 +105,7 @@ class TaskController extends Controller
                 $label->save();
             }
 
-            $store_label_to_task = $this->store_label_to_task($label->id , $task->id);
+             $this->store_label_to_task($label->id , $task->id);
 
             return $label;
         });
@@ -115,7 +116,6 @@ class TaskController extends Controller
     public function store_label_to_task($label_id , $task_id)
     {
         $result = DB::transaction(function () use ($label_id , $task_id) {
-
 
             $taskLable = TaskLabel::firstOrNew(['label_id' => $label_id , 'task_id' => $task_id]);
 
