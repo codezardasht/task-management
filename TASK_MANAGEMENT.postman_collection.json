@@ -630,12 +630,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}api/board",
+							"raw": "{{url}}api/board?search=",
 							"host": [
 								"{{url}}api"
 							],
 							"path": [
 								"board"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": ""
+								}
 							]
 						}
 					},
@@ -1094,12 +1100,18 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}api/task",
+							"raw": "{{url}}api/task?search=ne",
 							"host": [
 								"{{url}}api"
 							],
 							"path": [
 								"task"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "ne"
+								}
 							]
 						}
 					},

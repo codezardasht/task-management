@@ -33,4 +33,13 @@ class Board extends Model implements Auditable
             });
         });
     }
+
+    public function scopeSearch($query)
+    {
+        $query->when(request('search') != "" , function ($query){
+            $query->where(function ($query) {
+                $query->where('name','LIKE' , '%'.request('search').'%');
+            });
+        });
+    }
 }

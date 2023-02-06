@@ -29,7 +29,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-       $tasks = Task::checkrole()->get();
+       $tasks = Task::checkrole()->search()->get();
 
        return new TaskCollection($tasks);
     }
@@ -203,14 +203,6 @@ class TaskController extends Controller
 
         $result = DB::transaction(function () use ($request, $task) {
 
-//            $assigned_users = $task->users;
-//            if ($assigned_users->count() > 0) {
-//                // Remove the existing task
-//                $task->users()->detach($assigned_users->first()->id);
-//            }
-//
-//            // Make the new task
-//            $task->users()->attach($request->user_id, ['created_by' => auth()->id()]);
 
             $status = $task->users()->toggle(request('user_id') , ['created_by' => auth()->id()]);
 

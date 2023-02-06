@@ -41,6 +41,15 @@ class Task extends Model
         });
     }
 
+    public function scopeSearch($query)
+    {
+        $query->when(request('search') != "" , function ($query){
+            $query->where(function ($query) {
+                $query->where('title','LIKE' , '%'.request('search').'%');
+            });
+        });
+    }
+
     protected static function boot()
     {
         parent::boot();
