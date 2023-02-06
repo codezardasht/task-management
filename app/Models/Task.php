@@ -20,7 +20,7 @@ class Task extends Model
     {
         parent::boot();
         static::creating(function ($model) {
-            $max = Task::where('board_id' , $model->board_id)->where('list_id' , $model->list_id)->max('order') + 1;
+            $max = Task::where('board_id' , $model->board_id)->where('status_board_id' , $model->status_board_id)->max('order') + 1;
             $model->order = $max;
         });
     }

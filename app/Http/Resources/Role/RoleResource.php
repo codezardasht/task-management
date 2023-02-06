@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Resources\Board;
+namespace App\Http\Resources\Role;
 
-use App\Http\Resources\ListCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BoardResource extends JsonResource
+class RoleResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,7 +17,7 @@ class BoardResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'status_board' => new ListCollection($this->whenLoaded('status_board')),
+            'permissions' => new PermissionCollection($this->permissions),
         ];
     }
 }

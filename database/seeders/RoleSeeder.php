@@ -20,67 +20,67 @@ class RoleSeeder extends Seeder
         DB::table('permissions')->insert([
             [
                 'name' => 'create_user',
-                'guard_name' => 'web'
+                'guard_name' => 'api'
             ],
             [
                 'name' => 'update_user',
-                'guard_name' => 'web'
+                'guard_name' => 'api'
             ],
             [
                 'name' => 'delete_user',
-                'guard_name' => 'web'
+                'guard_name' => 'api'
             ],
             [
                 'name' => 'view_user',
-                'guard_name' => 'web'
+                'guard_name' => 'api'
             ],
             [
                 'name' => 'view_board',
-                'guard_name' => 'web'
+                'guard_name' => 'api'
             ],
             [
                 'name' => 'create_board',
-                'guard_name' => 'web'
+                'guard_name' => 'api'
             ],
             [
                 'name' => 'update_board',
-                'guard_name' => 'web'
+                'guard_name' => 'api'
             ],
             [
                 'name' => 'delete_board',
-                'guard_name' => 'web'
+                'guard_name' => 'api'
             ],
             [
                 'name' => 'view_task',
-                'guard_name' => 'web'
+                'guard_name' => 'api'
             ],
             [
                 'name' => 'create_task',
-                'guard_name' => 'web'
+                'guard_name' => 'api'
             ],
             [
                 'name' => 'delete_task',
-                'guard_name' => 'web'
+                'guard_name' => 'api'
             ],
             [
                 'name' => 'update_task',
-                'guard_name' => 'web'
+                'guard_name' => 'api'
             ],
             [
                 'name' => 'delete_label',
-                'guard_name' => 'web'
+                'guard_name' => 'api'
             ],
             [
                 'name' => 'update_label',
-                'guard_name' => 'web'
+                'guard_name' => 'api'
             ],
             [
                 'name' => 'create_label',
-                'guard_name' => 'web'
+                'guard_name' => 'api'
             ],
             [
                 'name' => 'view_label',
-                'guard_name' => 'web'
+                'guard_name' => 'api'
             ],
         ]);
 

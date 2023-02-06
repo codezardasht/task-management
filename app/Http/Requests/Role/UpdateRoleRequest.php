@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Task;
+namespace App\Http\Requests\Role;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreTaskRequest extends FormRequest
+class UpdateRoleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,14 +25,9 @@ class StoreTaskRequest extends FormRequest
     public function rules()
     {
         return [
-            'board_id' => 'required|exists:boards,id',
-            'status_board_id' => [
-                'required',
-                Rule::exists('status_boards', 'id')->where(function ($query) {
-                    $query->where('board_id', request()->input('board_id'));
-                })
-            ],
-            'title' => 'required|max:255',
+            'permissions' => ['required', 'array'],
+            'permissions.*' => 'required|exists:permissions,id',
+            'name' => ['required' , 'max:255' ,   Rule::unique('roles')->ignore($this->role->id)],
         ];
     }
 }

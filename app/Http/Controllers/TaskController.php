@@ -7,6 +7,7 @@ use App\Http\Requests\Task\UpdateTaskRequest;
 use App\Http\Requests\TaskAssignRequest;
 use App\Http\Resources\Task\TaskResource;
 use App\Models\Label;
+use App\Models\StatusBoard;
 use App\Models\Task;
 use App\Models\TaskLabel;
 use App\Models\User;
@@ -38,13 +39,25 @@ class TaskController extends Controller
         $task = new Task;
         $task->title = $request->title;
         $task->board_id = $request->board_id;
-        $task->list_id = $request->list_id;
-        $task->current_status = "Todo";
+        $task->status_board_id = $request->status_board_id;
+        $task->current_status = $this->get_status_name($request->status_board_id);
         $task->created_by = \auth()->id();
         $task->created_at = Carbon::now();
         return $task->save()
             ? store_message("Task" , $task)
             : try_again_message();
+    }
+
+    public function get_status_name($status_id)
+    {
+
+        return DB::transaction(function () use ($status_id){
+            $status = StatusBoard::findOrFail($status_id);
+
+            return $status->name;
+        });
+
+
     }
 
     /**
@@ -138,6 +151,8 @@ class TaskController extends Controller
 
     public function assign(TaskAssignRequest $request , Task $task)
     {
+        $this->check_task_assign($task);
+
         $assigned_users = $task->users;
         if ($assigned_users->count() > 0) {
             // Remove the existing task
@@ -146,6 +161,12 @@ class TaskController extends Controller
 
         // Make the new task
         $task->users()->attach($request->user_id);
+    }
+
+    public function check_task_assign($task)
+    {
+        $getStatusName = $this->get_status_name($task->status_board_id);
+
     }
 
     /**

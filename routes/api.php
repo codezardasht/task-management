@@ -8,6 +8,7 @@ use App\Http\Controllers\BoardController;
 use App\Http\Controllers\ListBoardController;
 use App\Http\Controllers\LabelController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\RoleController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -34,7 +35,7 @@ Route::group([
 ], function ($router) {
     Route::apiResource('user', UserController::class);
 
-    Route::get('board/{board}/listBoard',[BoardController::class,'list_board']);
+    Route::get('board/{board}/status_board',[BoardController::class,'status_board']);
     Route::apiResource('board', BoardController::class);
 
     Route::apiResource('label', LabelController::class);
@@ -42,4 +43,6 @@ Route::group([
 
     Route::patch('task/{task}/assign',[TaskController::class,'assign']);
     Route::apiResource('task', TaskController::class);
+
+    Route::apiResource('role', RoleController::class);
 });

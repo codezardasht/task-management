@@ -12,8 +12,8 @@ class Board extends Model implements Auditable
     use HasFactory,SoftDeletes;
     use \OwenIt\Auditing\Auditable;
 
-    public function lists()
+    public function status_board()
     {
-        return $this->hasMany(ListBoard::class,'board_id');
+        return $this->hasMany(StatusBoard::class,'board_id');
     }
 }

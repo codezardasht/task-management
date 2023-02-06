@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->integer('board_id');
             $table->string('name');
+            $table->enum('is_assign', [0, 1])->default(0)->comment('for check this status can be assign');
+            $table->string('role_ids')->nullable()->comment('this field is seperate by comma for handling multiple condition about status change');
             $table->timestamps();
             $table->integer('created_by');
             $table->integer('updated_by')->nullable();

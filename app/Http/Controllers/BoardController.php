@@ -10,6 +10,7 @@ use App\Models\Board;
 use App\Models\StatusBoard;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
 
 class BoardController extends Controller
 {
@@ -60,19 +61,62 @@ class BoardController extends Controller
 
     public function store_board_status($board_id)
     {
-        $status = ['To-do', 'In-Progress', 'Dev-Review', 'Testing', 'Done', 'Close'];
+        $status = ['To-do' => ['is_assign' => 0, 'role' => [
+            'Developer',
+            'Product Owner'
+        ]], 'In-Progress' => ['is_assign' => 1, 'role' => [
+            'Developer',
+            'Product Owner'
+        ]], 'Dev-Review' => ['is_assign' => 1, 'role' => [
+            'Developer',
+            'Product Owner'
+        ]], 'Testing' => ['is_assign' => 1, 'role' => [
+            'Developer',
+            'Product Owner'
+        ]], 'Done' => ['is_assign' => 1, 'role' => [
+            'Developer',
+            'Product Owner'
+        ]], 'Close' => ['is_assign' => 1, 'role' => [
+            'Developer',
+            'Product Owner'
+        ]],];
         $date_now = Carbon::now();
 
-        return DB::transaction(function () use ($board_id, $status , $date_now) {
-            foreach ($status as $status) {
+        return DB::transaction(function () use ($board_id, $status, $date_now) {
+            foreach ($status as $key => $status) {
+
+                $is_assign  = $status["is_assign"];
+                $roles  = $status["role"];
+                $role_ids = $this->get_role_id($roles);
+
                 $newStatusBoard = new StatusBoard;
                 $newStatusBoard->board_id = $board_id;
-                $newStatusBoard->name = $status;
+                $newStatusBoard->name = $key;
+                $newStatusBoard->is_assign = "$is_assign";
+                $newStatusBoard->role_ids = $role_ids;
                 $newStatusBoard->created_by = auth()->id();
                 $newStatusBoard->created_at = $date_now;
                 $newStatusBoard->save();
             }
             return $status;
+        });
+    }
+
+    public function get_role_id($roles)
+    {
+        return DB::transaction(function () use ($roles) {
+            if(count($roles) > 0)
+            {
+                $roleIds = [];
+                foreach ($roles as $roleName) {
+                    $role = Role::where('name', $roleName)->first();
+                    if ($role) {
+                        $roleIds[] = $role->id;
+                    }
+                }
+               return implode(',' , $roleIds);
+            }
+
         });
     }
 
@@ -120,10 +164,10 @@ class BoardController extends Controller
     }
 
 
-    public function list_board(Board $board)
+    public function status_board(Board $board)
     {
-        $boardList = $board->with('lists')->first();
-        return new BoardResource($boardList);
+        $boardStatus = $board->with('status_board')->first();
+        return new BoardResource($boardStatus);
     }
 
     /**
