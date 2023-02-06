@@ -22,7 +22,7 @@ class BoardController extends Controller
     public function index()
     {
         $this->authorize('view_board');
-        $boards = Board::all();
+        $boards = Board::checkrole()->get();
         return new BoardCollection($boards);
     }
 
