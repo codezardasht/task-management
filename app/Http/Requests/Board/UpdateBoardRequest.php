@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Board;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateBoardRequest extends FormRequest
 {
@@ -24,7 +25,11 @@ class UpdateBoardRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|max:255'
+            'name' => [
+                'required',
+                'max:255',
+                Rule::unique('boards')->ignore($this->board->id),
+            ],
         ];
     }
 }

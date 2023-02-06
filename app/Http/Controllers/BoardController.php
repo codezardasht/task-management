@@ -7,7 +7,9 @@ use App\Http\Requests\Board\UpdateBoardRequest;
 use App\Http\Resources\Board\BoardCollection;
 use App\Http\Resources\Board\BoardResource;
 use App\Models\Board;
+use App\Models\StatusBoard;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class BoardController extends Controller
 {
@@ -37,26 +39,48 @@ class BoardController extends Controller
      */
     public function store(StoreBoardRequest $request)
     {
-        $board = new Board;
-        $board->name = $request->name;
-        $board->created_by = \auth()->id();
-        $board->created_at = Carbon::now();
-        return $board->save()
-            ? response()->json([
-                'status' => true,
-                "message" => "Create Board Successfully",
-            ])
-            : response()->json([
-                'status' => false,
-                "message" => "Please Try Again !",
-            ], 403);
+
+        $result = DB::transaction(function () use ($request) {
+            $board = new Board;
+            $board->name = $request->name;
+            $board->created_by = \auth()->id();
+            $board->created_at = Carbon::now();
+            $board->save();
+
+            $this->store_board_status($board->id);
+            return $board;
+        });
+
+
+        return ($result)
+            ? store_message('Board')
+            : try_again_message();
+    }
+
+
+    public function store_board_status($board_id)
+    {
+        $status = ['To-do', 'In-Progress', 'Dev-Review', 'Testing', 'Done', 'Close'];
+        $date_now = Carbon::now();
+
+        return DB::transaction(function () use ($board_id, $status , $date_now) {
+            foreach ($status as $status) {
+                $newStatusBoard = new StatusBoard;
+                $newStatusBoard->board_id = $board_id;
+                $newStatusBoard->name = $status;
+                $newStatusBoard->created_by = auth()->id();
+                $newStatusBoard->created_at = $date_now;
+                $newStatusBoard->save();
+            }
+            return $status;
+        });
     }
 
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Board  $board
+     * @param \App\Models\Board $board
      * @return BoardResource
      */
     public function show(Board $board)
@@ -94,6 +118,7 @@ class BoardController extends Controller
                 "message" => "Please Try Again !",
             ], 403);
     }
+
 
     public function list_board(Board $board)
     {
