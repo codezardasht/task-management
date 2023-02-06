@@ -21,6 +21,7 @@ class BoardController extends Controller
      */
     public function index()
     {
+        $this->authorize('view_board');
         $boards = Board::all();
         return new BoardCollection($boards);
     }
@@ -40,7 +41,7 @@ class BoardController extends Controller
      */
     public function store(StoreBoardRequest $request)
     {
-
+        $this->authorize('create_board');
         $result = DB::transaction(function () use ($request) {
             $board = new Board;
             $board->name = $request->name;
@@ -127,6 +128,7 @@ class BoardController extends Controller
      */
     public function show(Board $board)
     {
+
         return new BoardResource($board);
     }
 
@@ -147,6 +149,7 @@ class BoardController extends Controller
      */
     public function update(UpdateBoardRequest $request, Board $board)
     {
+        $this->authorize('update_board');
         $board->name = $request->name;
         $board->updated_by = \auth()->id();
         $board->updated_at = Carbon::now();
@@ -176,14 +179,9 @@ class BoardController extends Controller
      */
     public function destroy(Board $board)
     {
+        $this->authorize('delete_board');
         return $board->delete()
-            ? response()->json([
-                'status' => true,
-                "message" => "Board Deleted Successfully",
-            ])
-            : response()->json([
-                'status' => false,
-                "message" => "Please Try Again !",
-            ], 403);
+            ? delete_message("Board")
+            : try_again_message();
     }
 }

@@ -40,6 +40,7 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request)
     {
+        $this->authorize('create_task');
        $result = DB::transaction(function () use ($request){
            $task = new Task;
            $task->title = $request->title;
@@ -116,6 +117,7 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
+        $this->authorize('update_task');
         $task->title = $request->title;
         $task->description = $request->description;
         $task->due_date = $request->due_date;
@@ -274,6 +276,7 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
+        $this->authorize('delete_task');
         return $task->delete()
             ? delete_message("TASK")
             : try_again_message();

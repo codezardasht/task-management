@@ -18,6 +18,7 @@ class LabelController extends Controller
      */
     public function index()
     {
+        $this->authorize('view_label');
         $search = request('search');
         $labels = Label::when($search != "" , function ($query) use ($search){
             $query->where('name' , 'LIKE' , '%'.$search.'%');
@@ -33,20 +34,15 @@ class LabelController extends Controller
      */
     public function store(StoreLabelRequest $request)
     {
+        $this->authorize('create_label');
         $label = new Label;
         $label->name = $request->name;
         $label->color = $request->color;
         $label->created_by = \auth()->id();
         $label->created_at = Carbon::now();
         return $label->save()
-            ? response()->json([
-                'status' => true,
-                "message" => "Create Lable Successfully",
-            ],201)
-            : response()->json([
-                'status' => false,
-                "message" => "Please Try Again !",
-            ], 403);
+            ? store_message("Label")
+            : try_again_message();
     }
 
     /**
@@ -69,19 +65,14 @@ class LabelController extends Controller
      */
     public function update(UpdateLabelRequest $request, Label $label)
     {
+        $this->authorize('update_label');
         $label->name = $request->name;
         $label->color = $request->color;
         $label->created_by = \auth()->id();
         $label->created_at = Carbon::now();
         return $label->save()
-            ? response()->json([
-                'status' => true,
-                "message" => "Update Lable Successfully",
-            ],201)
-            : response()->json([
-                'status' => false,
-                "message" => "Please Try Again !",
-            ], 403);
+            ? update_message("Label")
+            : try_again_message();
     }
 
     /**
@@ -92,6 +83,7 @@ class LabelController extends Controller
      */
     public function destroy(Label $label)
     {
+        $this->authorize('delete_label');
         return $label->delete()
             ? delete_message("Label")
             : try_again_message() ;

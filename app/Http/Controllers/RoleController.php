@@ -19,6 +19,7 @@ class RoleController extends Controller
      */
     public function index()
     {
+        $this->authorize('view_role');
         $roles = Role::with('permissions')->get();
 
         return new RoleCollection($roles);
@@ -32,7 +33,7 @@ class RoleController extends Controller
      */
     public function store(StoreRoleRequest $request)
     {
-
+        $this->authorize('create_role');
         $result = DB::transaction(function () use ($request){
             $role = Role::create(['name' => $request->name]);
             $role->syncPermissions($request->permissions);
@@ -65,6 +66,7 @@ class RoleController extends Controller
      */
     public function update(UpdateRoleRequest $request, Role $role)
     {
+        $this->authorize('update_role');
         $result = DB::transaction(function () use ($request , $role){
             $role->name = $request->name;
             $role->syncPermissions($request->permissions);
@@ -85,6 +87,7 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
+        $this->authorize('delete_role');
         $result = DB::transaction(function () use ( $role){
             // Detach the role's associated permissions
             $role->permissions()->detach();
