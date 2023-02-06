@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Task\StoreTaskRequest;
 use App\Http\Requests\Task\UpdateTaskRequest;
 use App\Http\Requests\TaskAssignRequest;
+use App\Http\Resources\Task\TaskCollection;
 use App\Http\Resources\Task\TaskResource;
 use App\Models\Label;
 use App\Models\StatusBoard;
@@ -28,6 +29,8 @@ class TaskController extends Controller
     {
         //
     }
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -212,6 +215,16 @@ class TaskController extends Controller
             return false;
         }
 
+    }
+
+    public function duy_date()
+    {
+        $dateNow = Carbon::now()->format('Y-m-d');
+
+        //get Task Due Date
+        $taskDuyDate = Task::whereDate('due_date','<=' , $dateNow)->get();
+
+        return new TaskCollection($taskDuyDate);
     }
 
     /**

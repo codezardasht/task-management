@@ -41,6 +41,7 @@ Route::group([
     Route::apiResource('label', LabelController::class);
     Route::apiResource('listBoard', ListBoardController::class);
 
+    Route::get('task/duy_date',[TaskController::class,'duy_date']);
     Route::patch('task/{task}/assign',[TaskController::class,'assign']);
     Route::apiResource('task', TaskController::class);
 

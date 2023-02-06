@@ -20,6 +20,8 @@ class TaskCollection extends ResourceCollection
                     'id' => $data->id,
                     'title' => $data->title,
                     'current_status' => $data->current_status,
+                    'labels' => new \App\Http\Resources\Task\LabelCollection($data?->labels),
+                    'assign' => ($data?->user) ? new UserTaskResource($data?->user) : [],
                 ];
             })
         ];
