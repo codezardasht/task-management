@@ -17,11 +17,17 @@ class TaskCollection extends ResourceCollection
         return [
             'data' => $this->collection->map(function ($data) {
                 return [
+
                     'id' => $data->id,
                     'title' => $data->title,
+                    'description' => $data->description,
+                    'image' => $data->image,
+                    'due_date' => $data->due_date,
+                    'order' => $data->order,
                     'current_status' => $data->current_status,
-                    'labels' => new \App\Http\Resources\Task\LabelCollection($data?->labels),
+                    'labels' => new \App\Http\Resources\Task\LabelCollection($data->labels),
                     'assign' => ($data?->user) ? new UserTaskResource($data?->user) : [],
+                    'activity_status' => new TaskStatusCollection($data->task_status),
                 ];
             })
         ];

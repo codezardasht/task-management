@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Task extends Model
 {
@@ -30,6 +31,15 @@ class Task extends Model
         return $this->hasOne(TaskUser::class, 'task_id');
     }
 
+    public function scopeCheckRole($query)
+    {
+
+        $query->when((Auth::user()->hasRole('developer') || Auth::user()->hasRole('testers')) , function ($query){
+            $query->whereHas('user' , function ($query){
+               $query->where('user_id', Auth::id());
+            });
+        });
+    }
 
     protected static function boot()
     {

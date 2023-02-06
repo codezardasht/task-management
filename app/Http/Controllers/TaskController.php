@@ -14,8 +14,10 @@ use App\Models\Task;
 use App\Models\TaskLabel;
 use App\Models\TaskStatus;
 use App\Models\User;
+use App\Notifications\TaskAssigned;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\Models\Role;
 
 class TaskController extends Controller
@@ -23,11 +25,13 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return TaskCollection
      */
     public function index()
     {
-        //
+       $tasks = Task::checkrole()->get();
+
+       return new TaskCollection($tasks);
     }
 
 
@@ -40,7 +44,7 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request)
     {
-        $this->authorize('create_task');
+//        $this->authorize('create_task');
        $result = DB::transaction(function () use ($request){
            $task = new Task;
            $task->title = $request->title;
@@ -191,21 +195,28 @@ class TaskController extends Controller
         $check = $this->check_task_assign($task);
         $check_role = $this->check_task_role($task, $request->user_id);
 
+
+
         if ($check || !$check_role) {
             return response()->json(['message' => 'Task is already assigned to someone else'], 400);
         }
+
         $result = DB::transaction(function () use ($request, $task) {
 
-            $assigned_users = $task->users;
-            if ($assigned_users->count() > 0) {
-                // Remove the existing task
-                $task->users()->detach($assigned_users->first()->id);
-            }
+//            $assigned_users = $task->users;
+//            if ($assigned_users->count() > 0) {
+//                // Remove the existing task
+//                $task->users()->detach($assigned_users->first()->id);
+//            }
+//
+//            // Make the new task
+//            $task->users()->attach($request->user_id, ['created_by' => auth()->id()]);
 
-            // Make the new task
-            $task->users()->attach($request->user_id, ['created_by' => auth()->id()]);
+            $status = $task->users()->toggle(request('user_id') , ['created_by' => auth()->id()]);
 
-            return $task;
+
+
+            return $status;
 
         });
 
@@ -218,11 +229,17 @@ class TaskController extends Controller
     {
         $check_role = $this->check_task_role($task, auth()->id());
 
+
         if ( !$check_role) {
             return response()->json(['message' => 'Unauthorized to movie task'], 400);
+        }else if ($request->status_board_id == $task->status_board_id)
+        {
+            return response()->json(['message' => 'This is same status'], 400);
         }
+
         $result = DB::transaction(function () use ($request, $task) {
             $this->store_task_status($task->id , $request->status_board_id);
+            $task->status_board_id = $request->status_board_id;
             $task->current_status = $this->get_status_name($request->status_board_id);
             $task->save();
 
@@ -244,12 +261,11 @@ class TaskController extends Controller
     public function check_task_role($task, $user_id)
     {
         $getStatusName = $this->get_status($task->status_board_id);
-        $getRole = Role::whereIn('id', [$getStatusName->role_ids])->get();
+
+        $getRole = Role::whereIn('id', explode(',' , $getStatusName->role_ids))->get();
         $userAssignRole = User::find($user_id)?->roles?->pluck('id');
 
-
         $result = $userAssignRole->intersect($getRole->pluck('id'))->isNotEmpty();
-
         if ($result) {
             return true;
         } else {

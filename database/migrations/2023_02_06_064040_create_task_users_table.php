@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('task_id');
             $table->integer('user_id');
             $table->timestamps();
-            $table->integer('created_by');
+            $table->integer('created_by')->default(0);
             $table->integer('updated_by')->nullable();
             $table->softDeletes();
         });

@@ -63,7 +63,7 @@ class BoardController extends Controller
     public function store_board_status($board_id)
     {
         $status = ['To-do' => ['is_assign' => 0, 'role' => [
-            'Developer',
+            'developers',
             'Product Owner'
         ]], 'In-Progress' => ['is_assign' => 1, 'role' => [
             'developers',
