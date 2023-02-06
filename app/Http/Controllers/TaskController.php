@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Task\StoreTaskRequest;
+use App\Http\Requests\Task\TaskAssignRequest;
 use App\Http\Requests\Task\TaskMovieRequest;
 use App\Http\Requests\Task\UpdateTaskRequest;
-use App\Http\Requests\TaskAssignRequest;
 use App\Http\Resources\Task\TaskCollection;
 use App\Http\Resources\Task\TaskResource;
 use App\Models\Label;

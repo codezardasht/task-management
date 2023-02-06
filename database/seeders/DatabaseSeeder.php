@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 class DatabaseSeeder extends Seeder
@@ -22,9 +23,10 @@ class DatabaseSeeder extends Seeder
         {
             $getRole =  Role::create([
                 'name' => 'Super Admin',
-                'guard_name'=>'web'
+                'guard_name'=>'api'
             ]);
         }
+
         $getAdmin = User::where('email','zardasht@gmail.com')->first();
         if(!$getAdmin)
         {
@@ -38,6 +40,72 @@ class DatabaseSeeder extends Seeder
             $insertAdmin->assignRole($getRole->id);
         }
 
+        DB::table('permissions')->insert([
+            [
+                'name' => 'create_user',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'update_user',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'delete_user',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'view_user',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'view_board',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'create_board',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'update_board',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'delete_board',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'view_task',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'create_task',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'delete_task',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'update_task',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'delete_label',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'update_label',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'create_label',
+                'guard_name' => 'api'
+            ],
+            [
+                'name' => 'view_label',
+                'guard_name' => 'api'
+            ],
+        ]);
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([

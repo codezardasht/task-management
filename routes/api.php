@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BoardController;
-use App\Http\Controllers\ListBoardController;
 use App\Http\Controllers\LabelController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\RoleController;
@@ -39,7 +38,6 @@ Route::group([
     Route::apiResource('board', BoardController::class);
 
     Route::apiResource('label', LabelController::class);
-    Route::apiResource('listBoard', ListBoardController::class);
 
     Route::get('task/duy_date',[TaskController::class,'duy_date']);
     Route::patch('task/{task}/move',[TaskController::class,'movie']);
