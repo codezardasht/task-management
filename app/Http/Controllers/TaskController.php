@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Task\StoreTaskRequest;
 use App\Http\Requests\Task\UpdateTaskRequest;
+use App\Http\Requests\TaskAssignRequest;
 use App\Http\Resources\Task\TaskResource;
 use App\Models\Label;
 use App\Models\Task;
 use App\Models\TaskLabel;
+use App\Models\User;
+use App\Notifications\TaskAssignedNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class TaskController extends Controller
 {
@@ -129,6 +133,19 @@ class TaskController extends Controller
         });
 
         return $result;
+    }
+
+
+    public function assign(TaskAssignRequest $request , Task $task)
+    {
+        $assigned_users = $task->users;
+        if ($assigned_users->count() > 0) {
+            // Remove the existing task
+            $task->users()->detach($assigned_users->first()->id);
+        }
+
+        // Make the new task
+        $task->users()->attach($request->user_id);
     }
 
     /**

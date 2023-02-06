@@ -39,5 +39,7 @@ Route::group([
 
     Route::apiResource('label', LabelController::class);
     Route::apiResource('listBoard', ListBoardController::class);
+
+    Route::patch('task/{task}/assign',[TaskController::class,'assign']);
     Route::apiResource('task', TaskController::class);
 });

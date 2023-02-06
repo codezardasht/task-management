@@ -10,6 +10,12 @@ class Task extends Model
     use HasFactory;
 
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'task_users', 'task_id', 'user_id');
+    }
+
+
     protected static function boot()
     {
         parent::boot();
