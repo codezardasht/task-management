@@ -35,6 +35,17 @@ if (!function_exists('assign_message_task')) {
     }
 }
 
+if (!function_exists('movie_message')) {
+    function movie_message($status)
+    {
+
+        return response()->json([
+            'status' => true,
+            "message" => "Successfully Movie Task To $status",
+        ]);
+    }
+}
+
 
 if (!function_exists('try_again_message')) {
     function try_again_message()

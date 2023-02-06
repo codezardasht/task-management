@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Task\StoreTaskRequest;
+use App\Http\Requests\Task\TaskMovieRequest;
 use App\Http\Requests\Task\UpdateTaskRequest;
 use App\Http\Requests\TaskAssignRequest;
 use App\Http\Resources\Task\TaskCollection;
@@ -13,10 +14,8 @@ use App\Models\Task;
 use App\Models\TaskLabel;
 use App\Models\TaskStatus;
 use App\Models\User;
-use App\Notifications\TaskAssignedNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\Models\Role;
 
 class TaskController extends Controller
@@ -213,6 +212,25 @@ class TaskController extends Controller
 
     }
 
+    public function movie(TaskMovieRequest $request , Task $task)
+    {
+        $check_role = $this->check_task_role($task, auth()->id());
+
+        if ( !$check_role) {
+            return response()->json(['message' => 'Unauthorized to movie task'], 400);
+        }
+        $result = DB::transaction(function () use ($request, $task) {
+            $this->store_task_status($task->id , $request->status_board_id);
+            $task->current_status = $this->get_status_name($request->status_board_id);
+            $task->save();
+
+            return $task;
+        });
+
+
+        return ($result) ? movie_message($this->get_status_name($request->status_board_id)) : try_again_message();
+
+    }
     public function check_task_assign($task)
     {
         $getStatusName = $this->get_status($task->status_board_id);
@@ -225,7 +243,8 @@ class TaskController extends Controller
     {
         $getStatusName = $this->get_status($task->status_board_id);
         $getRole = Role::whereIn('id', [$getStatusName->role_ids])->get();
-        $userAssignRole = User::find($user_id)->roles->pluck('id');
+        $userAssignRole = User::find($user_id)?->roles?->pluck('id');
+
 
         $result = $userAssignRole->intersect($getRole->pluck('id'))->isNotEmpty();
 
