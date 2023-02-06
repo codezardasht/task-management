@@ -26,6 +26,7 @@ class TaskResource extends JsonResource
             'current_status' => $this->current_status,
             'labels' => new \App\Http\Resources\Task\LabelCollection($this->labels),
             'assign' => new UserTaskResource($this->user),
+            'activity_status' => new TaskStatusCollection($this->task_status),
         ];
     }
 }

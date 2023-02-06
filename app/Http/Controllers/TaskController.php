@@ -11,6 +11,7 @@ use App\Models\Label;
 use App\Models\StatusBoard;
 use App\Models\Task;
 use App\Models\TaskLabel;
+use App\Models\TaskStatus;
 use App\Models\User;
 use App\Notifications\TaskAssignedNotification;
 use Carbon\Carbon;
@@ -40,16 +41,36 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request)
     {
-        $task = new Task;
-        $task->title = $request->title;
-        $task->board_id = $request->board_id;
-        $task->status_board_id = $request->status_board_id;
-        $task->current_status = $this->get_status_name($request->status_board_id);
-        $task->created_by = \auth()->id();
-        $task->created_at = Carbon::now();
-        return $task->save()
-            ? store_message("Task" , $task)
+       $result = DB::transaction(function () use ($request){
+           $task = new Task;
+           $task->title = $request->title;
+           $task->board_id = $request->board_id;
+           $task->status_board_id = $request->status_board_id;
+           $task->current_status = $this->get_status_name($request->status_board_id);
+           $task->created_by = \auth()->id();
+           $task->created_at = Carbon::now();
+           $task->save();
+           $this->store_task_status($task->id , $task->status_board_id);
+           return $task;
+       });
+
+        return ($result)
+            ? store_message("Task" , $result)
             : try_again_message();
+    }
+
+    public function store_task_status($task_id , $status_board_id)
+    {
+       return DB::transaction(function () use ($task_id , $status_board_id){
+           $newTaskStatus = new TaskStatus;
+           $newTaskStatus->task_id = $task_id;
+           $newTaskStatus->status_board_id = $status_board_id;
+           $newTaskStatus->created_by = \auth()->id();
+           $newTaskStatus->created_at = Carbon::now();
+           $newTaskStatus->save();
+
+           return $newTaskStatus;
+       }) ;
     }
 
     public function get_status_name($status_id)
@@ -103,7 +124,6 @@ class TaskController extends Controller
         $task->updated_at = Carbon::now();
         ($request->hasFile('image')) ? store_image($request , $task) : NULL;
         ($request->label != '') ? $this->store_label($request->label , $task) : NULL;
-
 
 
         return $task->save()

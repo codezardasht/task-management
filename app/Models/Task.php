@@ -20,6 +20,11 @@ class Task extends Model
         return $this->hasMany(TaskLabel::class, 'task_id');
     }
 
+    public function task_status()
+    {
+        return $this->hasMany(TaskStatus::class, 'task_id');
+    }
+
     public function user()
     {
         return $this->hasOne(TaskUser::class, 'task_id');
