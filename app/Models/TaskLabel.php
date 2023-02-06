@@ -15,4 +15,10 @@ class TaskLabel extends Model implements Auditable
     protected $fillable = ['label_id' , 'task_id' , 'created_by' , 'updated_by'];
 
 
+    public function label()
+    {
+        return $this->belongsTo(Label::class,'label_id');
+    }
+
+
 }

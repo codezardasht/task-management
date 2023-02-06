@@ -15,6 +15,16 @@ class Task extends Model
         return $this->belongsToMany(User::class, 'task_users', 'task_id', 'user_id');
     }
 
+    public function labels()
+    {
+        return $this->hasMany(TaskLabel::class, 'task_id');
+    }
+
+    public function user()
+    {
+        return $this->hasOne(TaskUser::class, 'task_id');
+    }
+
 
     protected static function boot()
     {

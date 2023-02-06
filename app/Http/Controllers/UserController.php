@@ -103,13 +103,7 @@ class UserController extends Controller
     {
         $this->authorize('delete_user');
         return $user->delete()
-            ? response()->json([
-                'status' => true,
-                "message" => "User Deleted Successfully",
-            ])
-            : response()->json([
-                'status' => false,
-                "message" => "Please Try Again !",
-            ], 403);
+            ? delete_message('User')
+            : try_again_message();
     }
 }
