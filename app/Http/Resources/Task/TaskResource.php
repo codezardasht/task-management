@@ -2,8 +2,6 @@
 
 namespace App\Http\Resources\Task;
 
-use App\Http\Resources\Label\LabelCollection;
-use App\Http\Resources\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TaskResource extends JsonResource
