@@ -85,9 +85,6 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-
-
-
         $result = DB::transaction(function () use ( $role){
             // Detach the role's associated permissions
             $role->permissions()->detach();

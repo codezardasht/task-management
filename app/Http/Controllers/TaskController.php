@@ -15,6 +15,7 @@ use App\Notifications\TaskAssignedNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
+use Spatie\Permission\Models\Role;
 
 class TaskController extends Controller
 {
@@ -51,7 +52,7 @@ class TaskController extends Controller
     public function get_status_name($status_id)
     {
 
-        return DB::transaction(function () use ($status_id){
+        return DB::transaction(function () use ($status_id) {
             $status = StatusBoard::findOrFail($status_id);
 
             return $status->name;
@@ -60,10 +61,22 @@ class TaskController extends Controller
 
     }
 
+    public function get_status($status_id)
+    {
+
+        return DB::transaction(function () use ($status_id) {
+            $status = StatusBoard::findOrFail($status_id);
+
+            return $status;
+        });
+
+
+    }
+
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Task  $task
+     * @param \App\Models\Task $task
      * @return TaskResource
      */
     public function show(Task $task)
@@ -151,28 +164,60 @@ class TaskController extends Controller
 
     public function assign(TaskAssignRequest $request , Task $task)
     {
-        $this->check_task_assign($task);
+        $check = $this->check_task_assign($task);
+        $check_role = $this->check_task_role($task, $request->user_id);
 
-        $assigned_users = $task->users;
-        if ($assigned_users->count() > 0) {
-            // Remove the existing task
-            $task->users()->detach($assigned_users->first()->id);
+        if ($check || !$check_role) {
+            return response()->json(['message' => 'Task is already assigned to someone else'], 400);
         }
+        $result = DB::transaction(function () use ($request, $task) {
 
-        // Make the new task
-        $task->users()->attach($request->user_id);
+            $assigned_users = $task->users;
+            if ($assigned_users->count() > 0) {
+                // Remove the existing task
+                $task->users()->detach($assigned_users->first()->id);
+            }
+
+            // Make the new task
+            $task->users()->attach($request->user_id, ['created_by' => auth()->id()]);
+
+            return $task;
+
+        });
+
+
+        return ($result) ? assign_message_task() : try_again_message();
+
     }
 
     public function check_task_assign($task)
     {
-        $getStatusName = $this->get_status_name($task->status_board_id);
+        $getStatusName = $this->get_status($task->status_board_id);
+
+        return ($getStatusName->is_assign == 0);
+
+    }
+
+    public function check_task_role($task, $user_id)
+    {
+        $getStatusName = $this->get_status($task->status_board_id);
+        $getRole = Role::whereIn('id', [$getStatusName->role_ids])->get();
+        $userAssignRole = User::find($user_id)->roles->pluck('id');
+
+        $result = $userAssignRole->intersect($getRole->pluck('id'))->isNotEmpty();
+
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
 
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Task  $task
+     * @param \App\Models\Task $task
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Task $task)

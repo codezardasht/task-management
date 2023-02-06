@@ -13,6 +13,28 @@ if (!function_exists('delete_message')) {
     }
 }
 
+if (!function_exists('assign_message')) {
+    function assign_message($message)
+    {
+
+        return response()->json([
+            'status' => false,
+            "message" => $message,
+        ],422);
+    }
+}
+
+if (!function_exists('assign_message_task')) {
+    function assign_message_task()
+    {
+
+        return response()->json([
+            'status' => true,
+            "message" => "Successfully assigned",
+        ]);
+    }
+}
+
 
 if (!function_exists('try_again_message')) {
     function try_again_message()

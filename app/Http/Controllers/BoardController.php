@@ -65,19 +65,17 @@ class BoardController extends Controller
             'Developer',
             'Product Owner'
         ]], 'In-Progress' => ['is_assign' => 1, 'role' => [
-            'Developer',
+            'developers',
             'Product Owner'
         ]], 'Dev-Review' => ['is_assign' => 1, 'role' => [
-            'Developer',
+            'developers',
             'Product Owner'
         ]], 'Testing' => ['is_assign' => 1, 'role' => [
-            'Developer',
+            'testers',
             'Product Owner'
         ]], 'Done' => ['is_assign' => 1, 'role' => [
-            'Developer',
             'Product Owner'
         ]], 'Close' => ['is_assign' => 1, 'role' => [
-            'Developer',
             'Product Owner'
         ]],];
         $date_now = Carbon::now();
