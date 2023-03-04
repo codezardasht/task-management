@@ -1,6 +1,18 @@
 <?php
 
+if (! function_exists('str_plural')) {
+    function str_plural($value, $count = 2)
+    {
+        return Illuminate\Support\Str::plural($value, $count);
+    }
+}
 
+if (! function_exists('snake_case')) {
+    function snake_case($value, $delimiter = '_')
+    {
+        return Illuminate\Support\Str::snake($value, $delimiter);
+    }
+}
 
 if (!function_exists('delete_message')) {
     function delete_message($title)
